@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetItemQuery } from "../apiSlice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,7 @@ export default function Details() {
     let [indexOfMovies, setIndexOfMovies] = useState(0);
     let params = useParams();
     let dispatch = useDispatch();
+    let navigate = useNavigate();
     let id = params.id;
     let {
         data: item,
@@ -60,8 +61,14 @@ export default function Details() {
                     <button>Add to Cart</button>
                 </div>
             </div>
+            {/*
+            Needs Testing clicking the dlc
+                    */}
             <div>
-                {item.dlc ? item.dlc.map((dlc) => (<div key={dlc.id || dlc._id} data-key={dlc.id || dlc._id}>
+                {item.dlc ? item.dlc.map((dlc) => (<div key={dlc.id || dlc._id} data-key={dlc.id || dlc._id} onClick={(e)=>{
+                if(e.target.tagName === "button") return;
+                navigate(`/details/${dlc.id||dlc._id}`)
+            }}>
                     <img src={dlc.header_image} alt={`img for ${dlc.name}`} />
                     <div>{dlc.name}</div>
                     <div>{"$" + dlc.original_price / 100}</div>

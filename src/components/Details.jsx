@@ -147,8 +147,8 @@ export default function Details() {
                         <Link to={`/details/${dlc.id || dlc._id}`} component={RouterLink} underline="none" display={"inline-block"} width={0.9}>
                             <Box display={"flex"} width={"100%"} alignItems={"center"} gap={5}>
                                 <img src={dlc.header_image} alt={`img for ${dlc.name}`} width={"30%"} style={{ flexShrink: 0 }} />
-                                <Typography variant="body1" component={"span"} color="rgba(0, 0, 0, 0.54)" >{dlc.name}</Typography>
-                                <Typography variant="body1" component={"span"} color="rgba(0, 0, 0, 0.54)" marginLeft={"auto"}>{"$" + dlc.original_price / 100}</Typography>
+                                <Typography variant="body1" component={"span"}  >{dlc.name}</Typography>
+                                <Typography variant="body1" component={"span"} marginLeft={"auto"}>{"$" + dlc.original_price / 100}</Typography>
                             </Box>
                         </Link>
                     </Grid>

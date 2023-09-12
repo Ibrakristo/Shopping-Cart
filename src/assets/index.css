@@ -11,12 +11,7 @@ body {
 }
 
 .MuiInputLabel-root,
-.css-15teoh9-MuiTypography-root-MuiLink-root,
-.css-14d9zly-MuiTypography-root-MuiLink-root,
-.css-1h1un4w-MuiTypography-root,
-.css-ktllgi-MuiTypography-root,
-.css-1h9z7r5-MuiButtonBase-root-MuiTab-root,
-.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+input[id="Search"] {
   color: #5e43f3 !important;
 }
 

@@ -37,8 +37,8 @@ export default function Cart() {
                             <Link to={`/details/${item.id}`} component={RouterLink} underline="none" display={"inline-block"} width={0.9}>
                                 <Box display={"flex"} width={"100%"} alignItems={"center"} gap={5}>
                                     <img src={item.img} alt={`img for ${item.name}`} width={"30%"} style={{ flexShrink: 0 }} />
-                                    <Typography variant="body1" component={"span"} color="rgba(0, 0, 0, 0.54)" >{item.name}</Typography>
-                                    <Typography variant="body1" component={"span"} color="rgba(0, 0, 0, 0.54)" marginLeft={"auto"}>{"$" + item.price / 100}</Typography>
+                                    <Typography variant="body1" component={"span"}  >{item.name}</Typography>
+                                    <Typography variant="body1" component={"span"} marginLeft={"auto"}>{"$" + item.price / 100}</Typography>
                                 </Box>
                             </Link>
                         </Grid>

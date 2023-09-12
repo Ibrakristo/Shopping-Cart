@@ -14,6 +14,7 @@ import Cart from './components/Cart'
 import Shop from './components/Shop'
 import Details from './components/details'
 import Search from './components/Search'
+import Spinner from './components/Spinner'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,6 +41,9 @@ const router = createBrowserRouter([
           {
             path: "/search",
             element: <Search />
+          }, {
+            path: "/spin",
+            element: <Spinner />
           }
         ]
       },

@@ -1,22 +1,43 @@
-import { Link, Outlet, Form } from "react-router-dom";
-import cart from '../assets/cart-shopping-solid.svg'
-import search from '../assets/magnifying-glass-solid.svg'
+import { Link as RouterLink, Outlet, Form } from "react-router-dom";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SearchIcon from '@mui/icons-material/Search';
+import Container from '@mui/material/Container'
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import Grid from "@mui/material/Grid";
+import { useState } from "react";
+
 export default function Navbar() {
 
 
+    return (
+        <>
+            <Grid container alignItems={"baseline"} padding={2}>
+                <Grid container item xs={1} marginLeft={1}>
+                    <Link component={RouterLink} to={"/"} underline="none" fontSize={24}>Storio</Link>
+                </Grid>
+                <Grid container item xs={1} marginLeft={5}>
+                    <Link component={RouterLink} to={"/shop"} underline="none" fontSize={16}>Shop</Link>
+                </Grid>
 
-    return (<div>
-        <div><Link to={"/"}>Storio</Link></div>
-        <Form method="GET" action="/search">
-            <div>
-                <input type="search" name="name" id="name" />
-                <button><img src={search} alt="search" width="20px" height="20px" /></button>
-            </div>
-        </Form>
-        <ul><li>
-            <Link to={"/shop"}>Shop</Link>
-        </li>
-            <li><Link to={"/cart"}><img src={cart} alt="cart" width="20px" height="20px" /><span></span></Link></li></ul>
-        <Outlet />
-    </div>)
+                <Grid container item xs justifyContent={"center"}>
+                    <Form method="GET" action="/search">
+                        <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                            <TextField id="Search" label="Search" variant="standard" name="name" margin="dense" />
+                            <Button sx={{ paddingY: 1 }} type="submit"><SearchIcon fontSize="medium" color="action" /></Button>
+                        </Box>
+                    </Form>
+                </Grid>
+                <Grid container item xs={1} justifyContent={"center"}>
+                    <Link component={RouterLink} to={"/cart"} ><ShoppingCartIcon fontSize="small" color="action" /></Link>
+                </Grid>
+            </Grid>
+            <Container>
+
+                <Outlet />
+            </Container>
+        </>
+    )
 }

@@ -102,7 +102,7 @@ export default function Details() {
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={media} onChange={handleChange} aria-label="Media">
                                 <Tab label="ScreenShots" />
-                                <Tab label="Movies" />
+                                <Tab label="Movies" disabled={!item.movies.length ? true : false} />
                             </Tabs>
                         </Box>
 

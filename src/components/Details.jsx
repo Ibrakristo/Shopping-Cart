@@ -143,7 +143,7 @@ export default function Details() {
 
 
             <Box>
-                {item.dlc ? item.dlc.map((dlc) => (<Grid container alignItems={"center"} key={dlc.id || dlc._id} data-key={dlc.id || dlc._id}>
+                {item.dlc ? item.dlc.map((dlc) => (<Grid container marginY={3} sx={{ ":hover": { transform: "translateY(-10px)", boxShadow: "10px 2px 5px black" } }} alignItems={"center"} key={dlc.id || dlc._id} data-key={dlc.id || dlc._id}>
                     <Grid item xs={10}>
                         <Link to={`/details/${dlc.id || dlc._id}`} component={RouterLink} underline="none" display={"inline-block"} width={0.9}>
                             <Box display={"flex"} width={"100%"} alignItems={"center"} gap={5}>

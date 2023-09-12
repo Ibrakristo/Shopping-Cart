@@ -27,7 +27,7 @@ export default function Shop() {
         setFetching(true);
         try {
             const ids = items.map((item) => (item.id || item._id))
-            let data = await fetch("/search/loadingcontent", {
+            let data = await fetch("/api/search/loadingcontent", {
                 mode: "cors",
                 method: "post",
                 headers: {

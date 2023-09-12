@@ -13,14 +13,18 @@ const cartSlice = createSlice({
         },
         itemRemoved(state, action) {
             cartAdapter.removeOne(state, action.payload)
+        },
+        removeAll(state) {
+            cartAdapter.removeAll(state);
         }
     }
 });
 
 
-export const { itemAdded, itemRemoved } = cartSlice.actions;
+export const { itemAdded, itemRemoved, removeAll } = cartSlice.actions;
 export default cartSlice.reducer;
 
 export const {
-    selectAll: selectAllItems
+    selectAll: selectAllItems,
+    selectTotal: SelectTotalItems,
 } = cartAdapter.getSelectors(state => state.cart)

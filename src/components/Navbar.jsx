@@ -7,10 +7,12 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Grid";
-import { useState } from "react";
-
+import Footer from "./Footer";
+import Badge from '@mui/material/Badge';
+import { SelectTotalItems } from '../cartSlice'
+import { useSelector } from "react-redux";
 export default function Navbar() {
-
+    let count = useSelector(SelectTotalItems);
 
     return (
         <>
@@ -31,13 +33,13 @@ export default function Navbar() {
                     </Form>
                 </Grid>
                 <Grid container item xs={1} justifyContent={"center"}>
-                    <Link component={RouterLink} to={"/cart"} ><ShoppingCartIcon fontSize="small" color="action" /></Link>
+                    <Badge color="primary" badgeContent={count}>
+                        <Link component={RouterLink} to={"/cart"} ><ShoppingCartIcon fontSize="small" color="action" /></Link>
+                    </Badge>
                 </Grid>
             </Grid>
-            <Container>
-
-                <Outlet />
-            </Container>
+            <Outlet />
+            <Footer />
         </>
     )
 }

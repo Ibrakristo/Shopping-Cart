@@ -17,13 +17,13 @@ export default function Item({ item }) {
         setTrigger(true);
     }, [])
     return (
-        <Paper variant="outlined" sx={{ backgroundColor: "#282828" }} >
+        <Paper variant="elevation" elevation={20} sx={{ backgroundColor: "#282828", ":hover": { transform: "translateY(-10px)", } }} >
             <Collapse in={trigger} timeout={500}>
                 <Link component={RouterLink} to={`/details/${item.id || item._id}`} sx={{ display: "inline-block" }} color={"inherit"} underline="none" >
                     <img src={item.header_image} alt={`header_image for ${item.name} `} width={"100%"} />
-                    <Typography variant="body1" component="h3">{item.name}</Typography>
+                    <Typography variant="body1" component="h3" marginLeft={1}>{item.name}</Typography>
                 </Link>
-                <Typography variant="button" component="span">{"$" + item.original_price / 100}</Typography>
+                <Typography variant="button" component="span" marginLeft={1}>{"$" + item.original_price / 100}</Typography>
                 <Box marginX={"auto"} width={"fit-content"}>
 
                     <Button onClick={() => {

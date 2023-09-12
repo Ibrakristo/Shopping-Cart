@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Spinner from "./Spinner";
 import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from 'react-infinite-scroller';
-import { useOutletContext } from "react-router-dom";
+import Container from "@mui/material/Container";
 
 export default function Shop() {
     const [fetching, setFetching] = useState(false);
@@ -58,20 +58,22 @@ export default function Shop() {
         <div>Not Found ...</div>
     )
     return (
-        <InfiniteScroll
-            loadMore={fetchData}
-            hasMore={hasMore}
-            loader={<Spinner />}
-            useWindow={true}
+        <Container>
+            <InfiniteScroll
+                loadMore={fetchData}
+                hasMore={hasMore}
+                loader={<Spinner />}
+                useWindow={true}
 
-        >
-            <Box display={"grid"} gridTemplateColumns={"repeat(auto-fill,minmax(300px,1fr))"} rowGap={5} columnGap={8}>
+            >
+                <Box display={"grid"} gridTemplateColumns={"repeat(auto-fill,minmax(300px,1fr))"} rowGap={5} columnGap={8}>
 
-                {items.map((item) => {
-                    return <Item key={item._id || item.id} item={item} />
-                })}
-            </Box >
-        </InfiniteScroll>
+                    {items.map((item) => {
+                        return <Item key={item._id || item.id} item={item} />
+                    })}
+                </Box >
+            </InfiniteScroll>
+        </Container>
 
     )
 }

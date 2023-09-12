@@ -60,6 +60,9 @@ export default function Details() {
         isError,
         error
     } = useGetItemQuery(id);
+    useEffect(() => {
+        setGrow(true)
+    }, [])
 
     if (isLoading) {
         return (
@@ -89,9 +92,6 @@ export default function Details() {
         let t = str.substr(str.indexOf("t="), str.length);
         return [id, t];
     }
-    useEffect(() => {
-        setGrow(true)
-    }, [])
 
     return (
         <>

@@ -52,7 +52,9 @@ export default function Shop() {
         return (<Spinner />)
     }
     if (isError) {
-        return (<div>{error.message}</div>)
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
+        )
     }
     if (!items) return (
         <div>Not Found ...</div>

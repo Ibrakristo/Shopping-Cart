@@ -14,11 +14,11 @@ export default function Featured() {
     if (isLoading) {
         return <Spinner />
     }
-    if (isError)
-        return <div>{error.message}</div>
-    if (!featuredItems) return (
-        <div>Not Found ...</div>
-    )
+    if (isError) {
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
+        )
+    }
     return (
 
         <Box display={"grid"} gridTemplateColumns={"repeat(auto-fill,minmax(300px,1fr))"} rowGap={5} columnGap={8}>{featuredItems.map(item => {

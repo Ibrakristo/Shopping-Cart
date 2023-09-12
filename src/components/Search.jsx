@@ -18,9 +18,11 @@ export default function Search() {
         )
     }
     if (isError) {
+
         return (
-            <div>{error.message}</div>
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
         )
+
     }
     if (!items) return (
         <div>Not Found ...</div>

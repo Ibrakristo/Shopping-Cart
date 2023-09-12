@@ -1,6 +1,6 @@
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { useGetItemQuery } from "../apiSlice";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { itemAdded } from "../cartSlice";
 import Container from '@mui/material/Container'
@@ -47,7 +47,6 @@ const VideoSlide = ({ url, isSelected }) => {
 
 
 export default function Details() {
-    const [grow, setGrow] = useState(false)
     let [media, setMedia] = useState(0)
     const customRenderItem = (item, props) => <item.type {...item.props} {...props} />;
 
@@ -60,9 +59,6 @@ export default function Details() {
         isError,
         error
     } = useGetItemQuery(id);
-    useEffect(() => {
-        setGrow(true)
-    }, [])
 
     if (isLoading) {
         return (
@@ -71,10 +67,13 @@ export default function Details() {
     }
     if (isError) {
         return (
-            <div>{error.message}</div>
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
         )
     }
+    if (!item) {
+        <div>Not Found ...</div>
 
+    }
     function handleChange(event, value) {
         setMedia(value);
     }

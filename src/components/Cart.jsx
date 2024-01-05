@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { itemRemoved, removeAll, selectAllItems } from "../cartSlice";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -8,61 +7,117 @@ import Grid from "@mui/material/Grid"
 import { Link as RouterLink } from 'react-router-dom'
 import Link from '@mui/material/Link'
 import Typography from "@mui/material/Typography";
-import Backdrop from "@mui/material/Backdrop";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useState } from "react";
+import apiSlice, { useEmptyCartMutation, useGetGamesQuery, useRemoveGamesMutation } from "../apiSlice";
+import { loggedOut } from "../userSlice";
+import { useNavigate } from "react-router-dom";
+
 export default function Cart() {
-    const cartItems = useSelector(selectAllItems);
+
+    const { data: cartItems,
+        isLoading,
+        isError,
+        error } = useGetGamesQuery();
     const dispatch = useDispatch();
-    const [open, setOpen] = useState(false);
-    const handleClose = () => {
-        setOpen(false);
-        dispatch(removeAll())
+    const [errors, setErrors] = useState("");
+    const userObj = useSelector((state) => { return state.user })
+    const date = new Date();
+    const tokenDate = new Date(userObj.time);
+    const Navigate = useNavigate();
+    const user = userObj.token;
+    const [emptyCart] = useEmptyCartMutation();
+    if (user && date.getTime() > tokenDate?.getTime()) {
+        dispatch(apiSlice.util.resetApiState());
+        dispatch(loggedOut());
+    }
+
+
+    if (isLoading) {
+        return <Spinner />
+    }
+    if (isError) {
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
+        )
+    }
+
+    const [removeGames, { isLoadingRemove, isErrorRemove, errorRemove }] = useRemoveGamesMutation();
+    if (isErrorRemove) {
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {errorRemove.status} of Status {errorRemove.originalStatus} with Content of "{errorRemove.data}"</div>
+        )
+    }
+    const handleOpen = async () => {
+        try {
+
+            let secret = await fetch("http://localhost:3000/api/cart/checkout", {
+                headers: {
+                    "Authorization": user
+                },
+                mode: "cors"
+            });
+            if (!secret.ok) {
+                setErrors("Something went wrong!");
+                return;
+            }
+            const secretKey = await secret.json();
+            Navigate("/checkout", {
+                state: {
+                    key: secretKey.clientSecret, amount: amount
+                }
+            })
+        }
+        catch (ex) {
+            setErrors(ex.msg || ex.message)
+        }
+
     };
-    const handleOpen = () => {
-        setOpen(true);
-    };
+    let amount = 0;
+    for (let game of cartItems) {
+        amount += game.original_price;
+    }
+    amount = amount / 100;
 
     return (
         <Container>
             <Box display="flex" justifyContent={"space-between"} margin={2}><Typography variant="h4" component={"span"}>{cartItems.length ? "Your Cart" : "You have no Items in the list"}</Typography>
-                <Button variant="outlined" onClick={() => {
-                    dispatch(removeAll());
+                <Button variant="outlined" onClick={async () => {
+                    const res = await emptyCart();
+                    if (res.error) {
+                        setErrors(res.error.data.error);
+                    }
+                    else {
+                        setErrors("");
+                    }
                 }}>Clear</Button>
             </Box>
             <Box display={"flex"} flexDirection={"column"} flexWrap={"nowrap"}>{cartItems.map(item => {
+
                 return (
-                    <Grid container alignItems={"center"} key={item.id}>
+                    <Grid container alignItems={"center"} key={item._id}>
                         <Grid item xs={10}>
-                            <Link to={`/details/${item.id}`} component={RouterLink} underline="none" display={"inline-block"} width={0.9}>
+                            <Link to={`/details/${item._id}`} component={RouterLink} underline="none" display={"inline-block"} width={0.9}>
                                 <Box display={"flex"} width={"100%"} alignItems={"center"} gap={5}>
-                                    <img src={item.img} alt={`img for ${item.name}`} width={"30%"} style={{ flexShrink: 0 }} />
+                                    <img src={item.header_image} alt={`img for ${item.name}`} width={"30%"} style={{ flexShrink: 0 }} />
                                     <Typography variant="body1" component={"span"}  >{item.name}</Typography>
-                                    <Typography variant="body1" component={"span"} marginLeft={"auto"}>{"$" + item.price / 100}</Typography>
+                                    <Typography variant="body1" component={"span"} marginLeft={"auto"}>{"$" + item.original_price / 100}</Typography>
                                 </Box>
                             </Link>
                         </Grid>
                         <Grid item xs={2}>
-                            <Box width={"fit-content"} margin={"auto"}><Button onClick={() => {
-                                dispatch(itemRemoved(item.id))
+                            <Box width={"fit-content"} margin={"auto"}><Button onClick={async () => {
+                                const res = await removeGames([item._id])
+                                if (res.error) {
+                                    setErrors(res.error.data.error);
+                                };
                             }}><DeleteIcon fontSize="small" /></Button></Box>
                         </Grid>
                     </Grid>
                 )
             })}</Box>
-            {cartItems.length ? <Box margin={"auto"} width={"fit-content"}><Button variant="contained" onClick={handleOpen}>Checkout</Button></Box> : ""}
-            <Backdrop
-                sx={{ color: '#fff', zIndex: 1 }}
-                open={open}
-                onClick={handleClose}
-            >
-                <Box>
-                    <Typography variant="h4" component={"h5"}>Congraulations! You've Successfully Bought The Items.</Typography>
-                    <Box width={"fit-content"} marginX="auto" marginY={3}>
-                        <CheckCircleOutlineIcon fontSize="large" color="success!important" />
-                    </Box>
-                </Box>
-            </Backdrop>
+            {cartItems.length ? (<><Box marginY={3}><Typography variant="h4" component={"h3"}>Total Amount : {"$" + amount}</Typography></Box><Box margin={"auto"} width={"fit-content"}><Button variant="contained" onClick={handleOpen}>Checkout</Button></Box></>) : ""}
+            <div><span>{errors}</span></div>
+
         </Container >
     )
 }

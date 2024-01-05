@@ -1,6 +1,5 @@
-import { Link as RouterLink } from "react-router-dom";
-import { itemAdded } from "../cartSlice";
-import { useDispatch } from "react-redux";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
@@ -8,14 +7,22 @@ import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
 import { useEffect, useState } from "react";
+import { useAddGameMutation } from "../apiSlice";
 
 export default function Item({ item }) {
+    const user = useSelector((state) => { return state.user.token })
     let [trigger, setTrigger] = useState(false);
-    let dispatch = useDispatch();
-
+    const Navigate = useNavigate();
     useEffect(() => {
         setTrigger(true);
     }, [])
+
+    const [addToCart, { isError, error }] = useAddGameMutation();
+    if (isError) {
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {error.status} of Status {error.originalStatus} with Content of "{error.data}"</div>
+        )
+    }
     return (
         <Paper variant="elevation" elevation={20} sx={{ backgroundColor: "#282828", ":hover": { transform: "translateY(-10px)", } }} >
             <Collapse in={trigger} timeout={500}>
@@ -27,7 +34,11 @@ export default function Item({ item }) {
                 <Box marginX={"auto"} width={"fit-content"}>
 
                     <Button onClick={() => {
-                        dispatch(itemAdded({ name: item.name, img: item.header_image, price: item.original_price, id: item.id || item._id }))
+                        if (user) {
+                            addToCart(item.id || item._id);
+                        } else {
+                            Navigate("/login")
+                        }
                     }}>
                         Add to Cart
                     </Button>

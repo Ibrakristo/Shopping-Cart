@@ -1,30 +1,36 @@
 import { Link as RouterLink, Outlet, Form } from "react-router-dom";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchIcon from '@mui/icons-material/Search';
-import Container from '@mui/material/Container'
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Grid";
 import Footer from "./Footer";
-import Badge from '@mui/material/Badge';
-import { SelectTotalItems } from '../cartSlice'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Panel from './Panel'
+import { loggedOut } from "../userSlice";
+import apiSlice from "../apiSlice";
 export default function Navbar() {
-    let count = useSelector(SelectTotalItems);
+    const userObj = useSelector((state) => { return state.user });
+    const user = userObj.token;
+    const date = new Date();
+    const dispatch = useDispatch();
+    const tokenDate = new Date(userObj.time);
+    if (user && date.getTime() > tokenDate?.getTime()) {
+        dispatch(apiSlice.util.resetApiState());
 
+        dispatch(loggedOut());
+    }
     return (
         <>
-            <Grid container alignItems={"baseline"} padding={2}>
-                <Grid container item xs={1} marginLeft={1}>
+            <Grid container alignItems={"baseline"} justifyContent={"space-between"} paddingX={3} paddingY={{ xs: 2, md: 0 }}>
+                <Grid container item xs={12} md={3} alignItems={"center"} justifyContent={"space-evenly"} minWidth={"fit-content"} >
                     <Link component={RouterLink} to={"/"} underline="none" fontSize={24}>Storio</Link>
-                </Grid>
-                <Grid container item xs={1} marginLeft={5}>
                     <Link component={RouterLink} to={"/shop"} underline="none" fontSize={16}>Shop</Link>
                 </Grid>
 
-                <Grid container item xs justifyContent={"center"}>
+
+                <Grid container item xs={12} md={6} justifyContent={"center"} minWidth={"fit-content"} marginBottom={3} marginTop={1}>
                     <Form method="GET" action="/search">
                         <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                             <TextField id="Search" label="Search" variant="standard" name="name" margin="dense" />
@@ -32,10 +38,8 @@ export default function Navbar() {
                         </Box>
                     </Form>
                 </Grid>
-                <Grid container item xs={1} justifyContent={"center"}>
-                    <Badge color="primary" badgeContent={count}>
-                        <Link component={RouterLink} to={"/cart"} ><ShoppingCartIcon fontSize="small" color="action" /></Link>
-                    </Badge>
+                <Grid container item xs={12} md={3} minWidth={"fit-content"} alignItems={"center"}>
+                    <Panel />
                 </Grid>
             </Grid>
             <Outlet />

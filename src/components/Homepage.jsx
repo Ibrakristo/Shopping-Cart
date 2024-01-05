@@ -8,7 +8,7 @@ export default function Homepage() {
 
     return (
         <>        <div className="trailer" >
-            <Typography className="test" variant="h2" component="h1" sx={{ position: "absolute", top: "calc(50% - 72px)" }} > The Home for all your Games</Typography>
+            <Typography className="test" variant="h3" component="h2" sx={{ position: "absolute", top: "calc(50% - 72px)", padding: "10px" }} > The Home for all your Games</Typography>
             <video autoPlay loop muted src={Trailer} style={{ width: "100%", maxHeight: "550px", objectFit: "fill", opacity: 0.2 }}></video>
         </div >
             <Container>

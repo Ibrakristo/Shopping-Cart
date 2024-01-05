@@ -1,8 +1,7 @@
-import { useParams, Link as RouterLink } from "react-router-dom";
-import { useGetItemQuery } from "../apiSlice";
+import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
+import { useAddGameMutation, useGetItemQuery } from "../apiSlice";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { itemAdded } from "../cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -31,8 +30,8 @@ function CustomTabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                <Box sx={{ p: 3 }} >
+                    {children}
                 </Box>
             )}
         </div>
@@ -47,11 +46,12 @@ const VideoSlide = ({ url, isSelected }) => {
 
 
 export default function Details() {
+    const user = useSelector((state) => { return state.user.token })
+
     let [media, setMedia] = useState(0)
     const customRenderItem = (item, props) => <item.type {...item.props} {...props} />;
-
+    const Navigate = useNavigate();
     let params = useParams();
-    let dispatch = useDispatch();
     let id = params.id;
     let {
         data: item,
@@ -59,6 +59,7 @@ export default function Details() {
         isError,
         error
     } = useGetItemQuery(id);
+    const [addToCart, { isErrorAdd, errorAdd }] = useAddGameMutation();
 
     if (isLoading) {
         return (
@@ -79,19 +80,23 @@ export default function Details() {
     }
 
     const customRenderThumb = (children) =>
-        children.map((item) => {
+        children.map((item, index) => {
             const videoId = getVideoId(item.props.url);
-            return <img src={getVideoThumb(videoId)} />;
+            return <img src={getVideoThumb(videoId)} key={index}/>;
         });
 
     const getVideoThumb = (ids) => `https://cdn.akamai.steamstatic.com/steam/apps/${ids[0]}/movie.293x165.jpg?t=${ids[1]}`;
     const getVideoId = (url) => {
-        let str = url.substr('http://cdn.akamai.steamstatic.com/steam/apps/'.length, url.length)
+        let str = url.substr('http://cdn.akamai.steamstatic.com/steam/apps/'.length, url?.length)
         let id = str.substr(0, str.indexOf("/"));
-        let t = str.substr(str.indexOf("t="), str.length);
+        let t = str.substr(str.indexOf("t="), str?.length);
         return [id, t];
     }
-
+    if (isErrorAdd) {
+        return (
+            <div style={{ margin: "auto", width: "fit-content", marginTop: "50px" }}>Sorry we Encountred A {errorAdd.status} of Status {errorAdd.originalStatus} with Content of "{errorAdd.data}"</div>
+        )
+    }
     return (
         <>
             <Container>
@@ -132,12 +137,16 @@ export default function Details() {
                             {item.publishers.map(pub => (<Typography variant="subtitle1   " component={"span"} key={pub}>{pub}</Typography>))}</Box> : ""}
                         {item.releaseDate ? item.releaseDate.coming_soon === false ? <Box><Typography variant="body1" component={"span"}>Release Date : {(new Date(item.releaseDate.date)).toDateString()}</Typography></Box> : <Typography variant="h6" component={"h6"}>Coming soon</Typography> : ""}
                         <Box><Typography vairant="button" component={"span"}>Price : {"$" + item.original_price / 100}</Typography></Box>
-                        <Box width={"fit-content"} marginX={"auto"} marginY={5}><Button onClick={() => {
-                            dispatch(itemAdded({ name: item.name, img: item.header_image, price: item.original_price, id: item.id || item._id }))
+                        <Box width={"fit-content"} marginX={"auto"} marginY={5}><Button onClick={async () => {
+                            if (user) {
+                                await addToCart(item.id || item._id);
+                            } else {
+                                Navigate("/login")
+                            }
                         }}>Add to Cart</Button></Box>
                     </Grid>
                 </Grid>
-            </Container>
+            </Container >
 
 
 
@@ -154,7 +163,11 @@ export default function Details() {
                     </Grid>
                     <Grid item xs={2}>
                         <Box width={"fit-content"} margin={"auto"}><Button onClick={() => {
-                            dispatch(itemAdded({ name: dlc.name, img: dlc.header_image, price: dlc.original_price, id: dlc.id || dlc._id }))
+                            if (user) {
+                                addToCart(dlc.id || dlc._id);
+                            } else {
+                                Navigate("/login")
+                            }
                         }}>Add to Cart</Button></Box>
                     </Grid>
                 </Grid>)) : ""}

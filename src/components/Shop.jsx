@@ -64,7 +64,7 @@ export default function Shop() {
             <InfiniteScroll
                 loadMore={fetchData}
                 hasMore={hasMore}
-                loader={<Spinner />}
+                loader={<Spinner key={0} />}
                 useWindow={true}
 
             >
